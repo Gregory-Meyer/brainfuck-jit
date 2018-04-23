@@ -25,7 +25,7 @@ private:
 
     mutable std::vector<CellT> right_memory_;
     mutable std::vector<CellT> left_memory_;
-    std::ptrdiff_t pointer_;
+    std::ptrdiff_t pointer_ = 0;
 };
 
 } // namespace interpreter

@@ -16,7 +16,7 @@ CellT IoUnit::get_input() {
     return input;
 }
 
-void IoUnit::send_output(CellT to_output) {
+void IoUnit::send_output(const CellT to_output) {
     const auto as_char = static_cast<char>(to_output);
 
     output_stream().put(as_char);

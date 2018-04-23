@@ -39,7 +39,7 @@ private:
     std::istream& stream() const noexcept;
 
     std::vector<InstructionT> instructions_;
-    std::size_t instruction_pointer_;
+    std::size_t instruction_pointer_ = 0;
     BracketMatcher matcher_;
     gsl::not_null<std::istream*> stream_ptr_;
 };

@@ -53,7 +53,9 @@ void DataUnit::decrement() noexcept {
 }
 
 std::size_t DataUnit::left_index(const std::ptrdiff_t index) noexcept {
-    return -index - 1;
+    const auto as_usize = static_cast<std::size_t>(-index - 1);
+
+    return as_usize;
 }
 
 } // namespace interpreter
