@@ -59,7 +59,14 @@ void Interpreter::step() {
         break;
     }
     case ',': {
-        data_.deref_mut() = io_.get_input();
+        try {
+            data_.deref_mut() = io_.get_input();
+        } catch (const InputError &e) {
+            if (e.type() != StreamError::Eof) {
+                throw;
+            }
+        }
+
         break;
     }
     case '[': {
