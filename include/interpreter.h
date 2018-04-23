@@ -31,10 +31,6 @@ public:
     void step();
 
 private:
-    void check_output_stream() const;
-
-    void check_input_stream() const;
-
     interpreter::DataUnit data_;
     interpreter::InstructionUnit instructions_;
     interpreter::IoUnit io_;
