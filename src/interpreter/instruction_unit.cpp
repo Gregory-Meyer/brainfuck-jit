@@ -30,19 +30,15 @@ const noexcept {
 
 InstructionT InstructionUnit::push_instruction() {
     const InstructionT next_instruction = [this] {
-        auto buffer = static_cast<InstructionT>(stream().get());
-
-        while (stream() && !is_instruction(buffer)) {
-            buffer = static_cast<InstructionT>(stream().get());
+        for (char buffer; stream() >> std::skipws >> buffer;) {
+            if (is_instruction(buffer)) {
+                return static_cast<InstructionT>(buffer);
+            }
         }
 
-        if (!stream()) {
-            throw NoInstructionAvailable{
-                "InstructionUnit::push_instruction"
-            };
-        }
-
-        return buffer;
+        throw NoInstructionAvailable{
+            "InstructionUnit::push_instruction"
+        };
     }();
 
     if (static_cast<char>(next_instruction) == '[') {

@@ -47,8 +47,7 @@ public:
 enum class StreamError {
     Eof,
     Fail,
-    Bad,
-    Other
+    Bad
 };
 
 class InputError : public std::runtime_error {

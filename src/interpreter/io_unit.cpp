@@ -1,5 +1,7 @@
 #include "interpreter/io_unit.h"
 
+#include <iomanip>
+
 namespace gregjm {
 namespace bf {
 namespace interpreter {
@@ -9,7 +11,8 @@ noexcept : input_stream_ptr_{ &input_stream },
            output_stream_ptr_{ &output_stream } { }
 
 CellT IoUnit::get_input() {
-    const CellT input = static_cast<CellT>(input_stream().get());
+    CellT input;
+    input_stream() >> std::noskipws >> input;
 
     check_input_stream();
 
@@ -19,7 +22,7 @@ CellT IoUnit::get_input() {
 void IoUnit::send_output(const CellT to_output) {
     const auto as_char = static_cast<char>(to_output);
 
-    output_stream().put(as_char);
+    output_stream() << as_char;
 
     check_output_stream();
 }
@@ -29,16 +32,12 @@ void IoUnit::check_input_stream() const {
         if (input_stream().bad()) {
             throw InputError{ StreamError::Bad,
                               "IoUnit::check_input_stream" };
-        } else if (input_stream().fail()) {
-            throw InputError{ StreamError::Fail,
-                              "IoUnit::check_input_stream" };
-        } else if (input_stream().eof()) {
-            throw InputError{ StreamError::Eof,
-                              "IoUnit::check_input_stream" };
         }
 
-        throw InputError{ StreamError::Other,
+        throw InputError{ StreamError::Fail,
                           "IoUnit::check_input_stream" };
+    } else if (input_stream().eof()) {
+        throw InputError{ StreamError::Eof, "IoUnit::check_input_stream" };
     }
 }
 
@@ -47,15 +46,12 @@ void IoUnit::check_output_stream() const {
         if (output_stream().bad()) {
             throw OutputError{ StreamError::Bad,
                                "IoUnit::check_output_stream" };
-        } else if (output_stream().fail()) {
-            throw OutputError{ StreamError::Fail,
-                               "IoUnit::check_output_stream" };
-        } else if (output_stream().eof()) {
-            throw OutputError{ StreamError::Eof,
-                               "IoUnit::check_output_stream" };
         }
 
-        throw OutputError{ StreamError::Other,
+        throw OutputError{ StreamError::Fail,
+                           "IoUnit::check_output_stream" };
+    } else if (output_stream().eof()) {
+        throw OutputError{ StreamError::Eof,
                            "IoUnit::check_output_stream" };
     }
 }
