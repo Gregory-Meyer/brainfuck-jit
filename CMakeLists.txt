@@ -11,5 +11,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -flto -fgcse-sm -fgcse-las -
 
 include_directories(include)
 
-add_executable(interpreter src/interpreter_main.cpp src/interpreter.cpp
-                           src/exceptions.cpp)
+set(INTERPRETER_SOURCES src/interpreter.cpp src/exceptions.cpp
+                        src/interpreter/bracket_matcher.cpp
+                        src/interpreter/data_unit.cpp
+                        src/interpreter/instruction_unit.cpp
+                        src/interpreter/io_unit.cpp)
+
+add_executable(interpreter src/interpreter_main.cpp ${INTERPRETER_SOURCES})
