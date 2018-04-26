@@ -29,9 +29,9 @@ std::vector<lexer::Token> Lexer::tokenize(std::istream &is) {
         const std::istreambuf_iterator<char> first{ is };
         const std::istreambuf_iterator<char> last;
 
-        const std::string buffer(first, last);
+        const std::string buf(first, last);
 
-        return buffer;
+        return buf;
     }();
 
     tokens_.reserve(buffer.size());
