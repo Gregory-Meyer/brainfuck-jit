@@ -22,3 +22,5 @@ set(LEXER_SOURCES src/lexer.cpp src/lexer/token.cpp)
 add_executable(interpreter src/interpreter_main.cpp ${INTERPRETER_SOURCES})
 
 add_executable(lexer src/lexer_main.cpp ${LEXER_SOURCES})
+
+add_executable(bf-to-c src/bf_to_c.cpp)
