@@ -1,30 +1,13 @@
 #include "lexer.h"
 
-#include <optional>
+#include <array>
+#include <string>
 #include <utility>
 
 namespace gregjm {
 namespace bf {
-namespace detail {
 
-static std::optional<lexer::Token>
-classify_token(const char maybe_token) noexcept {
-    switch (maybe_token) {
-    case '>': return std::make_optional(lexer::Token::IncrementPointer);
-    case '<': return std::make_optional(lexer::Token::DecrementPointer);
-    case '+': return std::make_optional(lexer::Token::IncrementData);
-    case '-': return std::make_optional(lexer::Token::DecrementData);
-    case '.': return std::make_optional(lexer::Token::OutputCell);
-    case ',': return std::make_optional(lexer::Token::InputCell);
-    case '[': return std::make_optional(lexer::Token::LoopBegin);
-    case ']': return std::make_optional(lexer::Token::LoopEnd);
-    default: return std::nullopt;
-    }
-}
-
-} // namespace detail
-
-std::vector<lexer::Token> Lexer::tokenize(std::istream &is) {
+std::vector<std::unique_ptr<lexer::Token>> Lexer::tokenize(std::istream &is) {
     const std::string buffer = [&is] {
         const std::istreambuf_iterator<char> first{ is };
         const std::istreambuf_iterator<char> last;
@@ -35,13 +18,14 @@ std::vector<lexer::Token> Lexer::tokenize(std::istream &is) {
     }();
 
     tokens_.reserve(buffer.size());
+    lexer::TokenFactory factory;
 
-    for (const char maybe_token : buffer) {
-        const auto token = detail::classify_token(maybe_token);
+    for (const char maybe_command : buffer) {
+        auto tokens = factory.make_tokens(maybe_command);
+        auto begin = std::make_move_iterator(tokens.begin());
+        auto end = std::make_move_iterator(tokens.end());
 
-        if (token.has_value()) {
-            tokens_.push_back(token.value());
-        }
+        tokens_.insert(tokens_.cend(), begin, end);
     }
 
     return std::move(tokens_);

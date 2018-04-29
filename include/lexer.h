@@ -4,7 +4,7 @@
 #include "lexer/token.h"
 
 #include <iostream>
-#include <variant>
+#include <memory>
 #include <vector>
 
 namespace gregjm {
@@ -12,10 +12,10 @@ namespace bf {
 
 class Lexer {
 public:
-    std::vector<lexer::Token> tokenize(std::istream &is);
+    std::vector<std::unique_ptr<lexer::Token>> tokenize(std::istream &is);
 
 private:
-    std::vector<lexer::Token> tokens_;
+    std::vector<std::unique_ptr<lexer::Token>> tokens_;
 };
 
 } // namespace bf

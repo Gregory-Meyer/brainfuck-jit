@@ -17,7 +17,7 @@ set(INTERPRETER_SOURCES src/interpreter.cpp src/exceptions.cpp
                         src/interpreter/instruction_unit.cpp
                         src/interpreter/io_unit.cpp)
 
-set(LEXER_SOURCES src/lexer.cpp)
+set(LEXER_SOURCES src/lexer.cpp src/lexer/token.cpp)
 
 add_executable(interpreter src/interpreter_main.cpp ${INTERPRETER_SOURCES})
 

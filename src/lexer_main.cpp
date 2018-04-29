@@ -22,23 +22,7 @@ open_files(const char *const input, const char *const output) {
         std::exit(EXIT_FAILURE);
     }
 
-    return std::make_pair(std::move(ifs), std::move(ofs));
-}
-
-constexpr static std::string_view
-token_as_string(const gregjm::bf::lexer::Token token) noexcept {
-    switch (token) {
-        case gregjm::bf::lexer::Token::IncrementPointer: return "ip";
-        case gregjm::bf::lexer::Token::DecrementPointer: return "dp";
-        case gregjm::bf::lexer::Token::IncrementData: return "id";
-        case gregjm::bf::lexer::Token::DecrementData: return "dd";
-        case gregjm::bf::lexer::Token::OutputCell: return "oc";
-        case gregjm::bf::lexer::Token::InputCell: return "ic";
-        case gregjm::bf::lexer::Token::LoopBegin: return "lb";
-        case gregjm::bf::lexer::Token::LoopEnd: return "le";
-    }
-
-    __builtin_unreachable();
+    return { std::move(ifs), std::move(ofs) };
 }
 
 int main(const int argc, const char *argv[]) {
@@ -53,9 +37,9 @@ int main(const int argc, const char *argv[]) {
     auto [ifs, ofs] = open_files(input_filename, output_filename);
 
     gregjm::bf::Lexer lexer;
-    std::vector<gregjm::bf::lexer::Token> tokens = lexer.tokenize(ifs);
+    auto tokens = lexer.tokenize(ifs);
 
-    for (const auto token : tokens) {
-        ofs << token_as_string(token) << '\n';
+    for (const auto &token_ptr : tokens) {
+        ofs << *token_ptr << '\n';
     }
 }
