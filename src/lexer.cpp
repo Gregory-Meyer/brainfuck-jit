@@ -1,5 +1,7 @@
 #include "lexer.h"
 
+#include "lexer/token_factory.h"
+
 #include <array>
 #include <string>
 #include <utility>
@@ -7,7 +9,7 @@
 namespace gregjm {
 namespace bf {
 
-std::vector<std::unique_ptr<lexer::Token>> Lexer::tokenize(std::istream &is) {
+TokenOwnerContainerT Lexer::tokenize(std::istream &is) {
     const std::string buffer = [&is] {
         const std::istreambuf_iterator<char> first{ is };
         const std::istreambuf_iterator<char> last;

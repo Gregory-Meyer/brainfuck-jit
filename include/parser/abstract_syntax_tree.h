@@ -1,6 +1,7 @@
 #ifndef GREGJM_BF_PARSER_ABSTRACT_SYNTAX_TREE_H
 #define GREGJM_BF_PARSER_ABSTRACT_SYNTAX_TREE_H
 
+#include "container_types.hpp"
 #include "lexer/token.h"
 #include "parser/ast/node.h"
 
@@ -14,9 +15,8 @@ namespace parser {
 
 class AbstractSyntaxTree {
 public:
-    AbstractSyntaxTree(
-        const std::vector<std::reference_wrapper<lexer::Token>> &tokens
-    );
+    AbstractSyntaxTree(const TokenRefContainerT &tokens);
+
 private:
     std::unique_ptr<ast::Node> root_;
 };

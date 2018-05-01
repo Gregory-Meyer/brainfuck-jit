@@ -4,11 +4,8 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
-#include <optional>
-#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace gregjm {
 namespace bf {
@@ -29,16 +26,11 @@ private:
     std::size_t line_number_;
 };
 
+using TokenOwnerT = std::unique_ptr<Token>;
+
 std::ostream& operator<<(std::ostream &os, const Token &token);
 
-class TokenFactory {
-public:
-    std::vector<std::unique_ptr<Token>> make_tokens(char maybe_command);
-
-private:
-    std::string comment_buffer_;
-    std::size_t line_number_ = 1;
-};
+std::istream& operator>>(std::istream &is, TokenOwnerT &token);
 
 namespace token {
 

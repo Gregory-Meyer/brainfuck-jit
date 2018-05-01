@@ -1,6 +1,7 @@
 #ifndef GREGJM_BF_LEXER_H
 #define GREGJM_BF_LEXER_H
 
+#include "container_types.hpp"
 #include "lexer/token.h"
 
 #include <iostream>
@@ -12,10 +13,10 @@ namespace bf {
 
 class Lexer {
 public:
-    std::vector<std::unique_ptr<lexer::Token>> tokenize(std::istream &is);
+    TokenOwnerContainerT tokenize(std::istream &is);
 
 private:
-    std::vector<std::unique_ptr<lexer::Token>> tokens_;
+    TokenOwnerContainerT tokens_;
 };
 
 } // namespace bf

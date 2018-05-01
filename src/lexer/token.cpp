@@ -16,93 +16,49 @@ std::ostream& operator<<(std::ostream &os, const Token &token) {
     return token.print(os);
 }
 
-namespace detail {
+std::istream& operator>>(std::istream &is, TokenOwnerT &token) {
+    std::size_t line;
+    is >> line;
 
-static constexpr bool is_command(const char maybe_command) noexcept {
-    switch (maybe_command) {
-    case '>': case '<': case '+': case '-':
-    case '.': case ',': case '[': case ']': {
-        return true;
-    } default: {
-        return false;
-    }
+    if (!is) {
+        return is;
     }
 
-}
+    std::string token_id;
+    is >> token_id;
 
-} // namespace detail
-
-std::vector<std::unique_ptr<Token>>
-TokenFactory::make_tokens(const char maybe_command) {
-    std::vector<std::unique_ptr<Token>> tokens;
-
-    if (!comment_buffer_.empty()
-        && (detail::is_command(maybe_command) || maybe_command == '\n')) {
-        auto comment_owner =
-            std::make_unique<token::Comment>(line_number_,
-                                             std::move(comment_buffer_));
-        tokens.push_back(std::move(comment_owner));
+    if (!is) {
+        return is;
     }
 
-    switch (maybe_command) {
-    case '>': {
-        auto token_owner =
-            std::make_unique<token::IncrementPointer>(line_number_);
-        tokens.push_back(std::move(token_owner));
+    if (token_id == "ip") {
+        token = std::make_unique<token::IncrementPointer>(line);
+    } else if (token_id == "dp") {
+        token = std::make_unique<token::DecrementPointer>(line);
+    } else if (token_id == "id") {
+        token = std::make_unique<token::IncrementData>(line);
+    } else if (token_id == "dd") {
+        token = std::make_unique<token::DecrementData>(line);
+    } else if (token_id == "oc") {
+        token = std::make_unique<token::OutputCell>(line);
+    } else if (token_id == "ic") {
+        token = std::make_unique<token::InputCell>(line);
+    } else if (token_id == "lb") {
+        token = std::make_unique<token::LoopBegin>(line);
+    } else if (token_id == "le") {
+        token = std::make_unique<token::LoopEnd>(line);
+    } else if (token_id == "co") {
+        std::string comment;
 
-        break;
-    } case '<': {
-        auto token_owner =
-            std::make_unique<token::DecrementPointer>(line_number_);
-        tokens.push_back(std::move(token_owner));
+        // eat the whitespace
+        is.ignore(1);
 
-        break;
-    } case '+': {
-        auto token_owner =
-            std::make_unique<token::IncrementData>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case '-': {
-        auto token_owner =
-            std::make_unique<token::DecrementData>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case '.': {
-        auto token_owner =
-            std::make_unique<token::OutputCell>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case ',': {
-        auto token_owner =
-            std::make_unique<token::InputCell>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case '[': {
-        auto token_owner =
-            std::make_unique<token::LoopBegin>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case ']': {
-        auto token_owner =
-            std::make_unique<token::LoopEnd>(line_number_);
-        tokens.push_back(std::move(token_owner));
-        
-        break;
-    } case '\n': {
-        ++line_number_;
-        
-        break;
-    } default: {
-        comment_buffer_.push_back(maybe_command);
-    }
+        std::getline(is, comment);
+
+        token = std::make_unique<token::Comment>(line, std::move(comment));
     }
 
-    return tokens;
+    return is;
 }
 
 namespace token {
@@ -170,7 +126,7 @@ Comment::Comment(const std::size_t line, std::string &&comment) noexcept
 : Token{ line }, comment_{ std::move(comment) } { }
 
 std::ostream& Comment::print(std::ostream &os) const {
-    return os << Token::line() << " co '" << comment() << '\'';
+    return os << Token::line() << " co " << comment();
 }
 
 std::string_view Comment::comment() const noexcept {

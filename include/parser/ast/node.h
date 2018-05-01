@@ -12,11 +12,15 @@ namespace ast {
 
 class Node {
 public:
+    virtual ~Node() = 0;
+
     virtual void accept(NodeVisitor &visitor) const = 0;
 };
 
 class LoopNode : public Node {
 public:
+    virtual ~LoopNode() = default; 
+
     void accept(NodeVisitor &visitor) const override;
 
 private:
