@@ -10,6 +10,6 @@ AbstractSyntaxTree::AbstractSyntaxTree(
 
 }
 
-}
-}
-}
+} // namespace parser
+} // namespace bf
+} // namespace gregjm

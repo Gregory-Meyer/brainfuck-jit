@@ -8,6 +8,12 @@ namespace ast {
 
 class Node;
 
+class EmptyNode;
+
+class BodyNode;
+
+class MainNode;
+
 class IncrementPointerNode;
 
 class DecrementPointerNode;
