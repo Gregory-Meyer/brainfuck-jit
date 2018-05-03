@@ -32,21 +32,21 @@ std::istream& operator>>(std::istream &is, TokenOwnerT &token) {
     }
 
     if (token_id == "ip") {
-        token = std::make_unique<token::IncrementPointer>(line);
+        token = std::make_unique<IncrementPointerToken>(line);
     } else if (token_id == "dp") {
-        token = std::make_unique<token::DecrementPointer>(line);
+        token = std::make_unique<DecrementPointerToken>(line);
     } else if (token_id == "id") {
-        token = std::make_unique<token::IncrementData>(line);
+        token = std::make_unique<IncrementDataToken>(line);
     } else if (token_id == "dd") {
-        token = std::make_unique<token::DecrementData>(line);
+        token = std::make_unique<DecrementDataToken>(line);
     } else if (token_id == "oc") {
-        token = std::make_unique<token::OutputCell>(line);
+        token = std::make_unique<OutputCellToken>(line);
     } else if (token_id == "ic") {
-        token = std::make_unique<token::InputCell>(line);
+        token = std::make_unique<InputCellToken>(line);
     } else if (token_id == "lb") {
-        token = std::make_unique<token::LoopBegin>(line);
+        token = std::make_unique<LoopBeginToken>(line);
     } else if (token_id == "le") {
-        token = std::make_unique<token::LoopEnd>(line);
+        token = std::make_unique<LoopEndToken>(line);
     } else if (token_id == "co") {
         std::string comment;
 
@@ -55,85 +55,83 @@ std::istream& operator>>(std::istream &is, TokenOwnerT &token) {
 
         std::getline(is, comment);
 
-        token = std::make_unique<token::Comment>(line, std::move(comment));
+        token = std::make_unique<CommentToken>(line, std::move(comment));
     }
 
     return is;
 }
 
-namespace token {
-
-IncrementPointer::IncrementPointer(const std::size_t line) noexcept
+IncrementPointerToken::IncrementPointerToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& IncrementPointer::print(std::ostream &os) const {
+std::ostream& IncrementPointerToken::print(std::ostream &os) const {
     return os << Token::line() << " ip";
 }
 
-DecrementPointer::DecrementPointer(const std::size_t line) noexcept
+DecrementPointerToken::DecrementPointerToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& DecrementPointer::print(std::ostream &os) const {
+std::ostream& DecrementPointerToken::print(std::ostream &os) const {
     return os << Token::line() << " dp";
 }
 
-IncrementData::IncrementData(const std::size_t line) noexcept
+IncrementDataToken::IncrementDataToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& IncrementData::print(std::ostream &os) const {
+std::ostream& IncrementDataToken::print(std::ostream &os) const {
     return os << Token::line() << " id";
 }
 
-DecrementData::DecrementData(const std::size_t line) noexcept
+DecrementDataToken::DecrementDataToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& DecrementData::print(std::ostream &os) const {
+std::ostream& DecrementDataToken::print(std::ostream &os) const {
     return os << Token::line() << " dd";
 }
 
-OutputCell::OutputCell(const std::size_t line) noexcept
+OutputCellToken::OutputCellToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& OutputCell::print(std::ostream &os) const {
+std::ostream& OutputCellToken::print(std::ostream &os) const {
     return os << Token::line() << " oc";
 }
 
-InputCell::InputCell(const std::size_t line) noexcept
+InputCellToken::InputCellToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& InputCell::print(std::ostream &os) const {
+std::ostream& InputCellToken::print(std::ostream &os) const {
     return os << Token::line() << " ic";
 }
 
-LoopBegin::LoopBegin(const std::size_t line) noexcept
+LoopBeginToken::LoopBeginToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& LoopBegin::print(std::ostream &os) const {
+std::ostream& LoopBeginToken::print(std::ostream &os) const {
     return os << Token::line() << " lb";
 }
 
-LoopEnd::LoopEnd(const std::size_t line) noexcept
+LoopEndToken::LoopEndToken(const std::size_t line) noexcept
 : Token{ line } { }
 
-std::ostream& LoopEnd::print(std::ostream &os) const {
+std::ostream& LoopEndToken::print(std::ostream &os) const {
     return os << Token::line() << " le";
 }
 
-Comment::Comment(const std::size_t line, const std::string_view comment)
+CommentToken::CommentToken(const std::size_t line,
+                           const std::string_view comment)
 : Token{ line }, comment_{ comment } { }
 
-Comment::Comment(const std::size_t line, std::string &&comment) noexcept
+CommentToken::CommentToken(const std::size_t line, std::string &&comment) noexcept
 : Token{ line }, comment_{ std::move(comment) } { }
 
-std::ostream& Comment::print(std::ostream &os) const {
+std::ostream& CommentToken::print(std::ostream &os) const {
     return os << Token::line() << " co " << comment();
 }
 
-std::string_view Comment::comment() const noexcept {
+std::string_view CommentToken::comment() const noexcept {
     return comment_;
 }
 
-} // namespace token
 } // namespace lexer
 } // namespace bf
 } // namespace gregjm

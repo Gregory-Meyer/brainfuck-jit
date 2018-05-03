@@ -25,7 +25,7 @@ const noexcept {
         return std::nullopt;
     }
 
-    return std::make_optional(instructions_[instruction_pointer_]);
+    return { instructions_[instruction_pointer_] };
 }
 
 InstructionT InstructionUnit::push_instruction() {

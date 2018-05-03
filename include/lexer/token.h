@@ -32,8 +32,6 @@ std::ostream& operator<<(std::ostream &os, const Token &token);
 
 std::istream& operator>>(std::istream &is, TokenOwnerT &token);
 
-namespace token {
-
 enum class TokenType {
     IncrementPointer,
     DecrementPointer,
@@ -46,85 +44,85 @@ enum class TokenType {
     Comment
 };
 
-class IncrementPointer : public Token {
+class IncrementPointerToken : public Token {
 public:
-    explicit IncrementPointer(std::size_t line) noexcept;
+    explicit IncrementPointerToken(std::size_t line) noexcept;
 
-    virtual ~IncrementPointer() = default;
+    virtual ~IncrementPointerToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class DecrementPointer : public Token {
+class DecrementPointerToken : public Token {
 public:
-    explicit DecrementPointer(std::size_t line) noexcept;
+    explicit DecrementPointerToken(std::size_t line) noexcept;
 
-    virtual ~DecrementPointer() = default;
+    virtual ~DecrementPointerToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class IncrementData : public Token {
+class IncrementDataToken : public Token {
 public:
-    explicit IncrementData(std::size_t line) noexcept;
+    explicit IncrementDataToken(std::size_t line) noexcept;
 
-    virtual ~IncrementData() = default;
+    virtual ~IncrementDataToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class DecrementData : public Token {
+class DecrementDataToken : public Token {
 public:
-    explicit DecrementData(std::size_t line) noexcept;
+    explicit DecrementDataToken(std::size_t line) noexcept;
 
-    virtual ~DecrementData() = default;
+    virtual ~DecrementDataToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class OutputCell : public Token {
+class OutputCellToken : public Token {
 public:
-    explicit OutputCell(std::size_t line) noexcept;
+    explicit OutputCellToken(std::size_t line) noexcept;
 
-    virtual ~OutputCell() = default;
+    virtual ~OutputCellToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class InputCell : public Token {
+class InputCellToken : public Token {
 public:
-    explicit InputCell(std::size_t line) noexcept;
+    explicit InputCellToken(std::size_t line) noexcept;
 
-    virtual ~InputCell() = default;
+    virtual ~InputCellToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class LoopBegin : public Token {
+class LoopBeginToken : public Token {
 public:
-    explicit LoopBegin(std::size_t line) noexcept;
+    explicit LoopBeginToken(std::size_t line) noexcept;
 
-    virtual ~LoopBegin() = default;
+    virtual ~LoopBeginToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class LoopEnd : public Token {
+class LoopEndToken : public Token {
 public:
-    explicit LoopEnd(std::size_t line) noexcept;
+    explicit LoopEndToken(std::size_t line) noexcept;
 
-    virtual ~LoopEnd() = default;
+    virtual ~LoopEndToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 };
 
-class Comment : public Token {
+class CommentToken : public Token {
 public:
-    Comment(std::size_t line, std::string_view comment);
+    CommentToken(std::size_t line, std::string_view comment);
 
-    Comment(std::size_t line, std::string &&comment) noexcept;
+    CommentToken(std::size_t line, std::string &&comment) noexcept;
 
-    virtual ~Comment() = default;
+    virtual ~CommentToken() = default;
 
     std::ostream& print(std::ostream &os) const override;
 
@@ -134,7 +132,6 @@ private:
     std::string comment_;
 };
 
-} // namespace token
 } // namespace lexer
 } // namespace bf
 } // namespace gregjm

@@ -4,10 +4,16 @@ namespace gregjm {
 namespace bf {
 namespace parser {
 
-AbstractSyntaxTree::AbstractSyntaxTree(
-    [[maybe_unused]] const TokenRefContainerT &tokens
-) {
+AbstractSyntaxTree::AbstractSyntaxTree(const TokenRefContainerT &tokens) {
 
+}
+
+void AbstractSyntaxTree::visit(ast::NodeVisitor &visitor) const {
+    if (!root_) {
+        return;
+    }
+
+    root_->accept(visitor);
 }
 
 } // namespace parser

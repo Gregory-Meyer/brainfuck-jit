@@ -4,6 +4,8 @@
 #include "parser/ast/node_fwd.h"
 #include "parser/ast/node_visitor_fwd.h"
 
+#include <iostream>
+
 #include <gsl/gsl>
 
 namespace gregjm {
@@ -36,7 +38,7 @@ public:
 
 class DebugVisitor : public NodeVisitor {
 public:
-    DebugVisitor(NodeVisitor &visitor) noexcept;
+    DebugVisitor(NodeVisitor &parent, std::ostream &logger) noexcept;
 
     void visit_empty(const EmptyNode &empty) override;
 
@@ -59,30 +61,12 @@ public:
     void visit_loop(const LoopNode &loop) override;
 
 private:
+    NodeVisitor& parent() noexcept;
+
+    std::ostream& logger() const noexcept;
+
     gsl::not_null<NodeVisitor*> parent_;
-};
-
-class LlvmCodegenVisitor : public NodeVisitor {
-public:
-    void visit_empty(const EmptyNode &empty) override;
-
-    void visit_body(const BodyNode &body) override;
-
-    void visit_main(const MainNode &main) override;
-
-    void visit_increment_ptr(const IncrementPointerNode &inc_ptr) override;
-
-    void visit_decrement_ptr(const DecrementPointerNode &dec_ptr) override;
-
-    void visit_increment_data(const IncrementDataNode &inc_data) override;
-
-    void visit_decrement_data(const DecrementDataNode &dec_data) override;
-
-    void visit_output_cell(const OutputCellNode &output) override;
-
-    void visit_input_cell(const InputCellNode &input) override;
-
-    void visit_loop(const LoopNode &loop) override;
+    gsl::not_null<std::ostream*> logger_;
 };
 
 } // namespace ast

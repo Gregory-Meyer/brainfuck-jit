@@ -2,6 +2,7 @@
 
 #include "parser/ast/node_visitor.h"
 
+#include <stdexcept>
 #include <utility>
 
 #include <range/v3/view.hpp>
@@ -12,9 +13,12 @@ namespace parser {
 namespace ast {
 namespace detail {
 
-// only noexcept if owner is not null
-// gsl::not_null doesn't work with unique_ptr
-static NodeRefT as_reference(const NodeOwnerT &owner) noexcept {
+// gsl::not_null doesn't work with unique_ptr unfortunately
+static NodeRefT as_reference(const NodeOwnerT &owner) {
+    if (!owner) {
+        throw std::invalid_argument{ "detail::as_reference" };
+    }
+
     return *owner;
 }
 
@@ -42,11 +46,11 @@ void MainNode::accept(NodeVisitor &visitor) const {
 }
 
 std::optional<NodeRefT> MainNode::body() const noexcept {
-    if (body_) {
-        return { *body_ };
+    if (!body_) {
+       return std::nullopt;
     }
 
-    return std::nullopt;
+    return { *body_ };
 }
 
 void IncrementPointerNode::accept(NodeVisitor &visitor) const {
@@ -72,11 +76,11 @@ void LoopNode::accept(NodeVisitor &visitor) const {
 }
 
 std::optional<NodeRefT> LoopNode::body() const noexcept {
-    if (body_) {
-        return { *body_ };
+    if (!body_) {
+       return std::nullopt;
     }
 
-    return std::nullopt;
+    return { *body_ };
 }
 
 } // namespace ast

@@ -25,14 +25,11 @@ BracketType Bracket::type() const noexcept {
     switch (data_.index()) {
     case 0: {
         return BracketType::Unknown;
-    }
-    case 1: {
+    } case 1: {
         return BracketType::Left;
-    }
-    case 2: {
+    } case 2: {
         return BracketType::Right;
-    }
-    default: {
+    } default: {
         __builtin_unreachable();
     }
     }
@@ -43,7 +40,7 @@ std::optional<std::size_t> Bracket::get_left_match() const noexcept {
         return std::nullopt;
     }
 
-    return std::make_optional(std::get<LeftBracket>(data_).match);
+    return { std::get<LeftBracket>(data_).match };
 }
 
 std::optional<std::size_t> Bracket::get_right_match() const noexcept {
@@ -51,7 +48,7 @@ std::optional<std::size_t> Bracket::get_right_match() const noexcept {
         return std::nullopt;
     }
 
-    return std::make_optional(std::get<RightBracket>(data_).match);
+    return { std::get<RightBracket>(data_).match };
 }
 
 Bracket::Bracket(const LeftBracket bracket) noexcept : data_{ bracket } { }
