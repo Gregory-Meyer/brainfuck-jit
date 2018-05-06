@@ -22,21 +22,16 @@ using NodeOwnerContainerT = std::vector<NodeOwnerT>;
 
 class Node {
 public:
-    virtual ~Node() = 0;
+    virtual ~Node() = default;
 
     virtual void accept(NodeVisitor &visitor) const = 0;
 };
 
-class EmptyNode : public Node {
-public:
-    virtual ~EmptyNode() = default;
-
-    void accept(NodeVisitor &visitor) const override;
-};
-
 class BodyNode : public Node {
 public:
-    BodyNode(NodeOwnerContainerT &&owners) noexcept;
+    BodyNode() noexcept = default;
+
+    explicit BodyNode(NodeOwnerContainerT &&owners) noexcept;
 
     virtual ~BodyNode() = default;
 
@@ -45,12 +40,15 @@ public:
     NodeRefContainerT nodes() const noexcept;
 
 private:
+    // all nodes must not be null
     NodeOwnerContainerT nodes_;
 };
 
 class MainNode : public Node {
 public:
-    MainNode(NodeOwnerT &&body) noexcept;
+    MainNode() noexcept = default;
+
+    explicit MainNode(NodeOwnerT &&body) noexcept;
 
     virtual ~MainNode() = default;
 
@@ -106,7 +104,9 @@ public:
 
 class LoopNode : public Node {
 public:
-    LoopNode(NodeOwnerT &&body) noexcept;
+    LoopNode() noexcept = default;
+
+    explicit LoopNode(NodeOwnerT &&body) noexcept;
 
     virtual ~LoopNode() = default; 
 

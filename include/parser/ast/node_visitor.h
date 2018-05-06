@@ -4,10 +4,6 @@
 #include "parser/ast/node_fwd.h"
 #include "parser/ast/node_visitor_fwd.h"
 
-#include <iostream>
-
-#include <gsl/gsl>
-
 namespace gregjm {
 namespace bf {
 namespace parser {
@@ -15,58 +11,56 @@ namespace ast {
 
 class NodeVisitor {
 public:
-    virtual void visit_empty(const EmptyNode &empty) = 0;
+    void visit_body(const BodyNode &body);
 
-    virtual void visit_body(const BodyNode &body) = 0;
+    void visit_main(const MainNode &main);
 
-    virtual void visit_main(const MainNode &main) = 0;
+    void visit_increment_ptr(const IncrementPointerNode &inc_ptr);
 
-    virtual void visit_increment_ptr(const IncrementPointerNode &inc_ptr) = 0;
+    void visit_decrement_ptr(const DecrementPointerNode &dec_ptr);
 
-    virtual void visit_decrement_ptr(const DecrementPointerNode &dec_ptr) = 0;
+    void visit_increment_data(const IncrementDataNode &inc_data);
 
-    virtual void visit_increment_data(const IncrementDataNode &inc_data) = 0;
+    void visit_decrement_data(const DecrementDataNode &dec_data);
 
-    virtual void visit_decrement_data(const DecrementDataNode &dec_data) = 0;
+    void visit_output_cell(const OutputCellNode &output);
 
-    virtual void visit_output_cell(const OutputCellNode &output) = 0;
+    void visit_input_cell(const InputCellNode &input);
 
-    virtual void visit_input_cell(const InputCellNode &input) = 0;
-
-    virtual void visit_loop(const LoopNode &loop) = 0;
-};
-
-class DebugVisitor : public NodeVisitor {
-public:
-    DebugVisitor(NodeVisitor &parent, std::ostream &logger) noexcept;
-
-    void visit_empty(const EmptyNode &empty) override;
-
-    void visit_body(const BodyNode &body) override;
-
-    void visit_main(const MainNode &main) override;
-
-    void visit_increment_ptr(const IncrementPointerNode &inc_ptr) override;
-
-    void visit_decrement_ptr(const DecrementPointerNode &dec_ptr) override;
-
-    void visit_increment_data(const IncrementDataNode &inc_data) override;
-
-    void visit_decrement_data(const DecrementDataNode &dec_data) override;
-
-    void visit_output_cell(const OutputCellNode &output) override;
-
-    void visit_input_cell(const InputCellNode &input) override;
-
-    void visit_loop(const LoopNode &loop) override;
+    void visit_loop(const LoopNode &loop);
 
 private:
-    NodeVisitor& parent() noexcept;
+    virtual void previsit_body(const BodyNode &body) = 0;
 
-    std::ostream& logger() const noexcept;
+    virtual void postvisit_body(const BodyNode &body) = 0;
 
-    gsl::not_null<NodeVisitor*> parent_;
-    gsl::not_null<std::ostream*> logger_;
+    virtual void previsit_main(const MainNode &main) = 0;
+
+    virtual void postvisit_main(const MainNode &main) = 0;
+
+    virtual void do_visit_increment_ptr(
+        const IncrementPointerNode &inc_ptr
+    ) = 0;
+
+    virtual void do_visit_decrement_ptr(
+        const DecrementPointerNode &dec_ptr
+    ) = 0;
+
+    virtual void do_visit_increment_data(
+        const IncrementDataNode &inc_data
+    ) = 0;
+
+    virtual void do_visit_decrement_data(
+        const DecrementDataNode &dec_data
+    ) = 0;
+
+    virtual void do_visit_output_cell(const OutputCellNode &output) = 0;
+
+    virtual void do_visit_input_cell(const InputCellNode &input) = 0;
+
+    virtual void previsit_loop(const LoopNode &loop) = 0;
+
+    virtual void postvisit_loop(const LoopNode &loop) = 0;
 };
 
 } // namespace ast

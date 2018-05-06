@@ -1,69 +1,125 @@
 #include "parser/ast/node_visitor.h"
 
+#include "parser/ast/node.h"
+
+#include <iostream>
+
 namespace gregjm {
 namespace bf {
 namespace parser {
 namespace ast {
+namespace detail {
 
-DebugVisitor::DebugVisitor(NodeVisitor &parent, std::ostream &logger) noexcept
-: parent_{ &parent }, logger_{ &logger } { }
+#if defined(DEBUG) && !defined(NDEBUG)
+static constexpr inline bool SHOULD_LOG = true;
+#else
+static constexpr inline bool SHOULD_LOG = false;
+#endif
 
-void DebugVisitor::visit_empty(const EmptyNode &empty) {
-    logger() << "visiting empty node\n";
-    parent().visit_empty(empty);
+} // namespace detail
+
+void NodeVisitor::visit_body(const BodyNode &body) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "previsiting body\n";
+    }
+
+    previsit_body(body);
+
+    for (const Node &node : body.nodes()) {
+        node.accept(*this);
+    }
+
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "postvisiting body\n";
+    }
+
+    postvisit_body(body);
 }
 
-void DebugVisitor::visit_body(const BodyNode &body) {
-    logger() << "visiting body node\n";
-    parent().visit_body(body);
+void NodeVisitor::visit_main(const MainNode &main) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "previsiting main\n";
+    }
+
+    previsit_main(main);
+
+    if (main.body().has_value()) {
+        const Node &body = main.body().value();
+        body.accept(*this);
+    }
+
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "postvisiting main\n";
+    }
+
+    postvisit_main(main);
 }
 
-void DebugVisitor::visit_main(const MainNode &main) {
-    logger() << "visiting main node\n";
-    parent().visit_main(main);
+void NodeVisitor::visit_increment_ptr(const IncrementPointerNode &inc_ptr) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting increment pointer\n";
+    }
+
+    do_visit_increment_ptr(inc_ptr);
 }
 
-void DebugVisitor::visit_increment_ptr(const IncrementPointerNode &inc_ptr) {
-    logger() << "visiting increment pointer node\n";
-    parent().visit_increment_ptr(inc_ptr);
+void NodeVisitor::visit_decrement_ptr(const DecrementPointerNode &dec_ptr) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting decrement pointer\n";
+    }
+
+    do_visit_decrement_ptr(dec_ptr);
 }
 
-void DebugVisitor::visit_decrement_ptr(const DecrementPointerNode &dec_ptr) {
-    logger() << "visiting decrement pointer node\n";
-    parent().visit_decrement_ptr(dec_ptr);
+void NodeVisitor::visit_increment_data(const IncrementDataNode &inc_data) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting increment data\n";
+    }
+
+    do_visit_increment_data(inc_data);
 }
 
-void DebugVisitor::visit_increment_data(const IncrementDataNode &inc_data) {
-    logger() << "visiting increment data node\n";
-    parent().visit_increment_data(inc_data);
+void NodeVisitor::visit_decrement_data(const DecrementDataNode &dec_data) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting decrement data\n";
+    }
+
+    do_visit_decrement_data(dec_data);
 }
 
-void DebugVisitor::visit_decrement_data(const DecrementDataNode &dec_data) {
-    logger() << "visiting decrement data node\n";
-    parent().visit_decrement_data(dec_data);
+void NodeVisitor::visit_output_cell(const OutputCellNode &output) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting output cell\n";
+    }
+
+    do_visit_output_cell(output);
 }
 
-void DebugVisitor::visit_output_cell(const OutputCellNode &output) {
-    logger() << "visiting output cell node\n";
-    parent().visit_output_cell(output);
+void NodeVisitor::visit_input_cell(const InputCellNode &input) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "visiting input cell\n";
+    }
+
+    do_visit_input_cell(input);
 }
 
-void DebugVisitor::visit_input_cell(const InputCellNode &input) {
-    logger() << "visiting input cell node\n";
-    parent().visit_input_cell(input);
-}
+void NodeVisitor::visit_loop(const LoopNode &loop) {
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "previsiting loop\n";
+    }
 
-void DebugVisitor::visit_loop(const LoopNode &loop) {
-    logger() << "visiting loop node\n";
-    parent().visit_loop(loop);
-}
+    previsit_loop(loop);
 
-NodeVisitor& DebugVisitor::parent() noexcept {
-    return *parent_;
-}
+    if (loop.body().has_value()) {
+        const Node &body = loop.body().value();
+        body.accept(*this);
+    }
 
-std::ostream& DebugVisitor::logger() const noexcept {
-    return *logger_;
+    if constexpr (detail::SHOULD_LOG) {
+        std::cout << "postvisiting loop\n";
+    }
+
+    postvisit_loop(loop);
 }
 
 } // namespace ast

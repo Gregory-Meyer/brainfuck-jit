@@ -2,9 +2,11 @@
 
 #include "parser/ast/node_visitor.h"
 
+#include <optional>
 #include <stdexcept>
 #include <utility>
 
+#include <range/v3/action.hpp>
 #include <range/v3/view.hpp>
 
 namespace gregjm {
@@ -13,30 +15,31 @@ namespace parser {
 namespace ast {
 namespace detail {
 
-// gsl::not_null doesn't work with unique_ptr unfortunately
-static NodeRefT as_reference(const NodeOwnerT &owner) {
+static bool node_owner_is_null(const NodeOwnerT &owner) noexcept {
+    return owner != nullptr;
+}
+
+static NodeRefT dereference_node_owner(const NodeOwnerT &owner) {
     if (!owner) {
-        throw std::invalid_argument{ "detail::as_reference" };
+        throw std::invalid_argument{ "dereference_node_owner" };
     }
 
-    return *owner;
+    return { *owner };
 }
 
 } // namespace detail
 
-void EmptyNode::accept(NodeVisitor &visitor) const {
-    visitor.visit_empty(*this);
-}
-
 BodyNode::BodyNode(NodeOwnerContainerT &&owners) noexcept
-: nodes_{ std::move(owners) } { }
+: nodes_{ std::move(owners)
+          | ranges::action::remove_if(&detail::node_owner_is_null) } { }
 
 void BodyNode::accept(NodeVisitor &visitor) const {
     visitor.visit_body(*this);
 }
 
 NodeRefContainerT BodyNode::nodes() const noexcept {
-    return { nodes_ | ranges::view::transform(&detail::as_reference) };
+    return { nodes_
+             | ranges::view::transform(&detail::dereference_node_owner) };
 }
 
 MainNode::MainNode(NodeOwnerT &&body) noexcept : body_{ std::move(body) } { }
