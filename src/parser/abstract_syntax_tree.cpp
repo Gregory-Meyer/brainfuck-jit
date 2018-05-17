@@ -5,7 +5,7 @@ namespace bf {
 namespace parser {
 
 AbstractSyntaxTree::AbstractSyntaxTree(const TokenRefContainerT &tokens) {
-
+    
 }
 
 void AbstractSyntaxTree::visit(ast::NodeVisitor &visitor) const {
