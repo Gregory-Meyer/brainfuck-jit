@@ -22,7 +22,7 @@ set(LEXER_SOURCES src/lexer.cpp src/lexer/token.cpp
 
 set(PARSER_SOURCES src/parser.cpp src/parser/abstract_syntax_tree.cpp
                    src/parser/ast/node.cpp src/parser/ast/node_visitor.cpp
-                   src/lexer/token.cpp)
+                   src/lexer/token.cpp src/parser/ast/c_codegen_visitor.cpp)
 
 set(LLVM_PARSER_SOURES src/parser/ast/llvm_codegen_visitor.cpp
                        ${PARSER_SOURCES})
